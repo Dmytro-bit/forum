@@ -3,47 +3,45 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreThreadRequest;
+use App\Models\Thread;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ThreadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // GET /api/threads
+    public function index(): JsonResponse
     {
-        //
+        $threads = Thread::with('user')
+            ->latest()
+            ->paginate(request('per_page', 10));
+
+        return response()->json($threads);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    // POST /api/threads
+    public function store(StoreThreadRequest $request): JsonResponse
     {
-        //
+        $thread = Auth::user()
+            ->threads()
+            ->create($request->validated());
+
+        return response()->json(['data' => $thread], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // GET /api/threads/{thread}
+    public function show(Thread $thread): JsonResponse
     {
-        //
+        $thread->load(['user', 'posts.user']);
+        return response()->json(['data' => $thread]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // DELETE /api/threads/{thread}
+    public function destroy(Thread $thread): \Illuminate\Http\Response
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $this->authorize('delete', $thread);
+        $thread->delete();
+        return response()->noContent();
     }
 }

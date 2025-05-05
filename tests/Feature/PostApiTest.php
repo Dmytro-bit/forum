@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class PostApiTest extends TestCase
 {
-    use RefreshDatabase;
+//    use RefreshDatabase;
 
     protected function authHeaders(User $user = null): array
     {

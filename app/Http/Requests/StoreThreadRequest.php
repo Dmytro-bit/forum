@@ -7,20 +7,21 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreThreadRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Allow any authenticated user to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * Validation rules for creating a thread.
      */
-    public function rules() {
-        return ['title'=>'required|string|max:150','body'=>'required|string'];
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:150',
+            'body'  => 'required|string',
+        ];
     }
-
 }

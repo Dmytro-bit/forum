@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ThreadApiTest extends TestCase
 {
-    use RefreshDatabase;
+//    use RefreshDatabase;
 
     protected function authHeaders(): array
     {

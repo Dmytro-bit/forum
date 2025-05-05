@@ -3,29 +3,29 @@
 namespace Tests;
 
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use RefreshDatabase {
-        // alias the trait’s method so we can override it
-        RefreshDatabase::runDatabaseMigrations as baseRunDatabaseMigrations;
-    }
     use CreatesApplication;
 
     /**
-     * Override the trait method so it only runs migrations
-     * from your app’s database/migrations folder.
+     * Bootstrap the application and rebuild schema before each test.
      */
-    protected function runDatabaseMigrations(): void
+    protected function setUp(): void
     {
-        // drop & re-create all tables, then run only your migrations
-        $this->artisan('migrate:fresh', [
+        parent::setUp();
+
+        // 1) Drop every table in the database
+        $schema = $this->app->make('db')->connection()->getSchemaBuilder();
+        $schema->dropAllTables();
+
+        // 2) Run only the migrations in database/migrations
+        $this->artisan('migrate', [
             '--path' => 'database/migrations',
         ])->run();
 
-        // reset the Artisan kernel so other commands still work
+        // 3) Reset the Artisan kernel so any further calls still work
         $this->app[Kernel::class]->setArtisan(null);
     }
 }

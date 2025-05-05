@@ -68,6 +68,3 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CD6FE7019CFC40B99682DC1D137F744E }}
-
-      - name: 'Post deployment actions'
-        run: bash /home/start_app.sh

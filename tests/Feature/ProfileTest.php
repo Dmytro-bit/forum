@@ -21,6 +21,8 @@ class ProfileTest extends TestCase
             ->component('Profile/Edit')
             ->has('status', 'success')
         );
+        dd($response->dump());
+
     }
 
     public function test_profile_information_can_be_updated(): void
@@ -42,6 +44,8 @@ class ProfileTest extends TestCase
         $user->refresh();
         $this->assertEquals('Test Name', $user->name);
         $this->assertEquals('test@example.com', $user->email);
+        dd($response->dump());
+
     }
 
     public function test_email_verification_status_is_unchanged_when_email_is_unchanged(): void
@@ -58,6 +62,8 @@ class ProfileTest extends TestCase
             ->component('Profile/Edit')
             ->has('status', 'success')
         );
+        dd($response->dump());
+
     }
 
     public function test_user_can_delete_their_account(): void
@@ -72,5 +78,9 @@ class ProfileTest extends TestCase
         $response->assertRedirect('/login');
         $this->assertGuest();
         $this->assertNull($user->fresh());
+        dd($response->dump());
+
     }
+
+
 }

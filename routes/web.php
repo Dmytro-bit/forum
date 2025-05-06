@@ -27,5 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+Route::prefix('api')
+    ->middleware('api')
+    ->group(base_path('routes/api.php'));
 require __DIR__.'/auth.php';

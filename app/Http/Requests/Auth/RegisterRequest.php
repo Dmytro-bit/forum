@@ -35,8 +35,7 @@ class RegisterRequest extends FormRequest
                 ->mixedCase()            // upper & lower case
                 ->letters()              // at least one letter
                 ->numbers()              // at least one number
-                ->symbols()              // at least one symbol
-                ->uncompromised(),       // not in data leaks
+                ->symbols(),       // not in data leaks
                 'confirmed'                 // matches password_confirmation
             ],
         ];

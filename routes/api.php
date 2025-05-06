@@ -7,20 +7,31 @@ use App\Http\Controllers\Api\{
     PostController
 };
 
+//
+// Public Thread endpoints (no auth)
+//
+Route::get('threads',          [ThreadController::class, 'index']);
+Route::get('threads/{thread}', [ThreadController::class, 'show']);
+
+//
+// Auth endpoints
+//
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login',    [AuthController::class, 'login']);
 
+//
+// Protected (requires Sanctum token)
+//
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('user',    [AuthController::class, 'user']);
 
-    // Threads CRUD (except update)
-    Route::apiResource('threads', ThreadController::class)
-        ->except(['update']);
+    // Thread write/delete
+    Route::post('threads',            [ThreadController::class, 'store']);
+    Route::delete('threads/{thread}', [ThreadController::class, 'destroy']);
 
-    // Nested posts under threads, shallow routes
-    Route::apiResource('threads.posts', PostController::class)
-        ->only(['store', 'destroy'])
-        ->shallow();
+    // Posts write/delete
+    Route::post('threads/{thread}/posts', [PostController::class, 'store']);
+    Route::delete('posts/{post}',         [PostController::class, 'destroy']);
 });

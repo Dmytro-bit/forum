@@ -16,7 +16,6 @@ yarn-error.log
 .vscode/
 
 /.phpunit.cache
-/public/build
 /storage/pail
 .env.production
 .phpactor.json

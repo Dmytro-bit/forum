@@ -11,7 +11,6 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'content',
         'user_id',
     ];
@@ -19,5 +18,22 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getBodyAttribute(): string
+    {
+        return $this->attributes['content'];
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->user->avatar_path
+            ? Storage::url($this->user->avatar_path)
+            : '/images/default-avatar.png';
     }
 }

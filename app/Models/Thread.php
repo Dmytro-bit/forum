@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,5 +36,10 @@ class Thread extends Model
     public function getLastActivityAttribute(): string
     {
         return $this->updated_at->diffForHumans();
+    }
+    public function scopePopular(Builder $query): Builder
+    {
+        return $query->withCount('posts')
+            ->orderBy('posts_count', 'desc');
     }
 }

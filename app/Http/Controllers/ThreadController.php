@@ -6,9 +6,50 @@ use App\Models\Thread;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Post;
 class ThreadController extends Controller
 {
+
+    public function dashboard(): \Inertia\Response
+    {
+        $user = auth()->user();
+
+        $threads = Thread::with('author')
+            ->withCount('replies')
+            ->latest('updated_at')
+            ->get()
+            ->map(fn($thread) => [
+                'id' => $thread->id,
+                'title' => $thread->title,
+                'author' => ['name' => $thread->author->name],
+                'replies_count' => $thread->replies_count,
+                'last_activity' => $thread->updated_at->diffForHumans(),
+                'is_pinned' => $thread->is_pinned
+            ]);
+
+        $popularThreads = Thread::popular()
+            ->limit(5)
+            ->get(['id', 'title']);
+
+        $recentActivity = [
+            'New comment on "Thread Title 1"',
+            'Alice Smith joined the forum',
+            'John Doe updated his profile picture',
+        ];
+
+        $stats = [
+            'threads_count' => Thread::where('user_id', $user->id)->count(),
+            'replies_count' => \App\Models\Post::where('user_id', $user->id)->count() // Changed Reply to Post
+        ];
+
+        return Inertia::render('Dashboard', [
+            'auth' => ['user' => $user],
+            'threads' => $threads,
+            'popularThreads' => $popularThreads,
+            'recentActivity' => $recentActivity,
+            'stats' => $stats
+        ]);
+    }
     public function index()
     {
 

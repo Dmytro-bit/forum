@@ -8,6 +8,7 @@ export default function Home({ threads, popularThreads, recentActivity, auth }) 
             <div className="bg-emerald-50 min-h-screen">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Hero Section */}
+
                     <div className="bg-emerald-900 rounded-xl shadow-sm p-8 mb-8 text-white">
                         <div className="flex justify-between items-center">
                             <div>

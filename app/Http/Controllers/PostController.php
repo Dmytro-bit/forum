@@ -9,13 +9,21 @@ use Inertia\Response;
 
 class PostController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $query = Post::with(['user', 'category'])->latest();
+
+        if ($request->has('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
+        }
+
         return Inertia::render('Posts/Index', [
-            'posts' => Post::with('user')->latest()->paginate(10)
+            'posts' => $query->paginate(10),
+            'categories' => Category::all()
         ]);
     }
-
     public function create(): Response
     {
         return Inertia::render('Posts/Create');

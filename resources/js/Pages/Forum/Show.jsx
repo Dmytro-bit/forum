@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Head, Link, useForm} from '@inertiajs/react';
 
-export default function ThreadShow({thread, posts, sidebarThreads}) {
+export default function ThreadShow({thread, posts, sidebarThreads, auth}) {
     const {data, setData, post, processing, reset} = useForm({body: ''});
     const [livePosts, setLivePosts] = useState(posts);
 
@@ -20,10 +20,14 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('threads.posts.store', thread.id), {
-            preserveState: true,
-            onSuccess: () => reset(),
-        });
+        post(
+            route('threads.posts.store', thread.id),
+            {
+                preserveState: true,      // ← don’t remount the page
+                preserveScroll: true,     // ← keep your scroll pos if you like
+                onSuccess: () => reset(), // ← clear the textarea
+            }
+        );
     };
 
 
@@ -58,7 +62,8 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
                             </li>
                         ))}
                     </ul>
-                    <Link href={route('threads.create')} className="mt-4 block text-green-600">+ New Thread</Link>
+                    {auth.user && (
+                        <Link href={route('threads.create')} className="mt-4 block text-green-600">+ New Thread</Link>)}
                 </aside>
 
                 {/* Main Chat Area */}
@@ -84,32 +89,35 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
                                         <span className="font-bold">{p.author.name}</span>
                                         <span className="text-xs text-gray-500">{p.created_at}</span>
                                     </div>
-                                    <p className="mt-1 text-gray-800">{p.body}</p>
+                                    <p className="mt-1 text-gray-800 break-words">{p.body}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    {/* New Post Form */}
-                    <form onSubmit={submit} className="p-4 border-t">
-                        <div className="flex items-center space-x-3">
-                            <textarea
-                                value={data.body}
-                                onChange={e => setData('body', e.target.value)}
-                                placeholder="Type your programming query here..."
-                                className="flex-1 rounded border-gray-300 p-2"
-                                rows={3}
-                            />
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="bg-green-600 text-white px-4 py-2 rounded"
-                            >
-                                Send
-                                <i className="fas fa-paper-plane"/>
-                            </button>
-                        </div>
-                    </form>
+
+                    {/* Conditionally render the form */}
+                    {auth.user && (
+                        <form onSubmit={submit} className="p-4 border-t">
+                            <div className="flex items-center space-x-3">
+                        <textarea
+                            value={data.body}
+                            onChange={e => setData('body', e.target.value)}
+                            placeholder="Type your programming query here..."
+                            className="flex-1 rounded border-gray-300 p-2"
+                            rows={3}
+                        />
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="bg-green-600 text-white px-4 py-2 rounded"
+                                >
+                                    Send
+                                    <i className="fas fa-paper-plane"/>
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
         </>

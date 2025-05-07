@@ -4,13 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Models\Thread;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ThreadController extends Controller
 {
     public function index()
     {
-        $threads = Thread::with(['user', 'category'])->latest()->get();
-        return view('threads.index', compact('threads'));
+        $threads = Thread::with('author')
+            ->withCount('replies')
+            ->latest('updated_at')
+            ->get()
+            ->map(fn($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'author' => ['name' => $t->author->name],
+                'replies_count' => $t->replies_count,
+                'last_activity' => $t->updated_at->diffForHumans(),
+            ]);
+
+        $popularThreads = Thread::withCount('replies')
+            ->orderBy('replies_count', 'desc')
+            ->limit(5)
+            ->get(['id', 'title']);
+
+        $recentActivity = [
+            'New comment on "Thread Title 1"',
+            'Alice Smith joined the forum',
+            'John Doe updated his profile picture',
+        ];
+
+        return Inertia::render('Forum/Index', compact('threads', 'popularThreads', 'recentActivity'));
     }
 
     public function show(Thread $thread)

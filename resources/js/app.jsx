@@ -1,17 +1,17 @@
-import { createRoot } from 'react-dom/client';
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../css/app.css';
+import React from 'react';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import Home from './Components/Home';
 
-createInertiaApp({
-    resolve: name =>
-        resolvePageComponent(
-            `./Pages/${name}.jsx`,
-            import.meta.glob('./Pages/**/*.jsx')
-        ),
-    setup({ el, App, props }) {
-        createRoot(el).render(<App {...props} />);
-    },
-});
+console.log("App component loaded");
+
+function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
+export default App;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Thread;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class ThreadController extends Controller
 {
@@ -74,18 +75,34 @@ class ThreadController extends Controller
 
     public function create()
     {
-        return view('threads.create');
+        return inertia('Forum/Create');
     }
 
     public function store(Request $request)
     {
+        // Log the incoming request data
+        Log::info('Incoming request data:', $request->all());
+
+        // Validate the request
         $validated = $request->validate([
             'title' => 'required|min:3',
-            'content' => 'required|min:10',
-            'category_id' => 'required|exists:categories,id'
+            'content' => 'required|min:3',
         ]);
 
-        $thread = $request->user()->threads()->create($validated);
+        // Log the validated data
+        Log::info('Validated data:', $validated);
+
+        // Add additional fields
+        $validated['slug'] = \Illuminate\Support\Str::slug($validated['title']);
+        $validated['user_id'] = $request->user()->id;
+
+        // Create the thread
+        $thread = Thread::create($validated);
+
+        // Log the created thread
+        Log::info('Thread created:', $thread->toArray());
+
+        // Redirect to the thread's show page
         return redirect()->route('threads.show', $thread);
     }
 

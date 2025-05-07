@@ -9,32 +9,21 @@ use Inertia\Response;
 
 class PostController extends Controller
 {
-    public function getNewPosts(Request $request, $threadId): \Illuminate\Http\JsonResponse
-    {
-        $lastPostId = $request->query('lastPostId', 0);
-
-        $newPosts = Post::where('thread_id', $threadId)
-            ->where('id', '>', $lastPostId)
-            ->with('author')
-            ->get();
-
-        return response()->json($newPosts);
-    }
-    public function index(Request $request): Response
-    {
-        $query = Post::with(['user', 'category'])->latest();
-
-        if ($request->has('category')) {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
-            });
-        }
-
-        return Inertia::render('Posts/Index', [
-            'posts' => $query->paginate(10),
-            'categories' => Category::all()
-        ]);
-    }
+//    public function index(Request $request): Response
+//    {
+//        $query = Post::with(['user', 'category'])->latest();
+//
+//        if ($request->has('category')) {
+//            $query->whereHas('category', function ($q) use ($request) {
+//                $q->where('slug', $request->category);
+//            });
+//        }
+//
+//        return Inertia::render('Posts/Index', [
+//            'posts' => $query->paginate(10),
+//            'categories' => Category::all()
+//        ]);
+//    }
     public function create(): Response
     {
         return Inertia::render('Posts/Create');

@@ -12,7 +12,6 @@ class Thread extends Model
         'title',
         'slug',
         'content',
-        'category_id',
         'user_id',
         'is_locked',
         'is_pinned'
@@ -21,11 +20,6 @@ class Thread extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
     }
 
     public function posts(): HasMany

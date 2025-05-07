@@ -33,7 +33,7 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
                     <h1 className="text-2xl font-bold">Forum</h1>
                     <nav>
                         <ul className="flex space-x-4">
-                            <li><Link href="/" className="hover:underline">Home</Link></li>
+                            <Link href="/dashboard" className="hover:underline">Dashboard</Link>
                             <li><Link href="#" className="hover:underline">Forum</Link></li>
                             <li><Link href="#" className="hover:underline">About</Link></li>
                         </ul>

@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 use App\Models\User;
-use App\Models\Category;
+use App\Models\Thread;
 use Illuminate\Database\Seeder;
 
 class PostSeeder extends Seeder
@@ -12,27 +12,16 @@ class PostSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        $categories = Category::all();
+        $threads = Thread::all();
 
-        $posts = [
-            [
-                'title' => 'First Post',
-                'slug' => 'first-post',
-                'content' => 'This is the first post content.',
-                'category_id' => $categories->random()->id,
+        foreach ($threads as $thread) {
+            Post::create([
+                'title' => "Reply to {$thread->title}",
+                'slug' => "reply-to-" . $thread->slug,
+                'content' => "This is a reply to {$thread->title}.",
+                'thread_id' => $thread->id,
                 'user_id' => $user->id
-            ],
-            [
-                'title' => 'Second Post',
-                'slug' => 'second-post',
-                'content' => 'This is the second post content.',
-                'category_id' => $categories->random()->id,
-                'user_id' => $user->id
-            ]
-        ];
-
-        foreach ($posts as $post) {
-            Post::create($post);
+            ]);
         }
     }
 }

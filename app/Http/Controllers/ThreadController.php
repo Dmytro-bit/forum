@@ -41,20 +41,20 @@ class ThreadController extends Controller
     {
         $thread->load(['author', 'replies.author']);
         $posts = $thread->replies->map(fn($post) => [
-            'id'        => $post->id,
-            'author'    => ['name' => $post->author->name, 'avatar' => $post->author->avatar_url],
-            'body'      => $post->body,
-            'created_at'=> $post->created_at->format('H:i A'),
+            'id' => $post->id,
+            'author' => ['name' => $post->author->name, 'avatar' => $post->author->avatar_url],
+            'body' => $post->body,
+            'created_at' => $post->created_at->format('H:i A'),
         ]);
 
         $sidebarThreads = Thread::where('id', '!=', $thread->id)
             ->latest('updated_at')
             ->limit(10)
-            ->get(['id','title']);
+            ->get(['id', 'title']);
 
         return Inertia::render('Forum/Show', [
-            'thread'         => [ 'id' => $thread->id, 'title' => $thread->title ],
-            'posts'          => $posts,
+            'thread' => ['id' => $thread->id, 'title' => $thread->title],
+            'posts' => $posts,
             'sidebarThreads' => $sidebarThreads,
         ]);
     }
@@ -78,12 +78,16 @@ class ThreadController extends Controller
 
     public function storePost(Request $request, Thread $thread)
     {
-        $request->validate([ 'body' => 'required|string' ]);
-    $thread->replies()->create([
-        'user_id' => auth()->id(),
-        'content'    => $request->body,
-    ]);
+        $request->validate(['body' => 'required|string']);
+        $new = $thread->replies()->create([
+            'user_id' => auth()->id(),
+            'content' => $request->body,
+        ]);
+        echo 'PostCreated event firing for thread ' . $thread->id;
 
-    return redirect()->route('threads.show', $thread);
-}
+        event(new \App\Events\PostCreated($new));  // ← pass $new, not $thread
+
+        return redirect()->route('threads.show', $thread);
+    }
+
 }

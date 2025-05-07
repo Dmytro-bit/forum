@@ -1,8 +1,23 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Head, Link, useForm} from '@inertiajs/react';
 
 export default function ThreadShow({thread, posts, sidebarThreads}) {
     const {data, setData, post, processing, reset} = useForm({body: ''});
+    // turn the incoming posts prop into local state
+    const [livePosts, setLivePosts] = useState(posts);
+
+    // subscribe to new posts over Echo
+    useEffect(() => {
+        const channel = window.Echo.channel(`thread.${thread.id}`);
+        channel.listen('PostCreated', e => {
+            setLivePosts(prev => [...prev, e]);
+        });
+
+        return () => {
+            window.Echo.leaveChannel(`thread.${thread.id}`);
+        };
+    }, [thread.id]);
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -56,7 +71,7 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
                     </header>
 
                     <div className="flex-1 overflow-auto p-4 space-y-4">
-                        {posts.map(p => (
+                        {livePosts.map(p => (
                             <div key={p.id} className="flex items-start space-x-3">
                                 <img
                                     src={p.author.avatar || '/images/default-avatar.png'}

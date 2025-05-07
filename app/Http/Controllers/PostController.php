@@ -9,6 +9,17 @@ use Inertia\Response;
 
 class PostController extends Controller
 {
+    public function getNewPosts(Request $request, $threadId): \Illuminate\Http\JsonResponse
+    {
+        $lastPostId = $request->query('lastPostId', 0);
+
+        $newPosts = Post::where('thread_id', $threadId)
+            ->where('id', '>', $lastPostId)
+            ->with('author')
+            ->get();
+
+        return response()->json($newPosts);
+    }
     public function index(Request $request): Response
     {
         $query = Post::with(['user', 'category'])->latest();

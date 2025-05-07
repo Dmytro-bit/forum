@@ -57,6 +57,7 @@ class ThreadController extends Controller
             'thread' => ['id' => $thread->id, 'title' => $thread->title],
             'posts' => $posts,
             'sidebarThreads' => $sidebarThreads,
+            'auth' => ['user' => auth()->user()], // Pass the auth object
         ]);
     }
 
@@ -96,13 +97,15 @@ class ThreadController extends Controller
     public function storePost(Request $request, Thread $thread)
     {
         $request->validate(['body' => 'required|string']);
+
         $new = $thread->replies()->create([
             'user_id' => auth()->id(),
-            'content' => $request->body,
+            'body'    => $request->body,
         ]);
-        echo 'PostCreated event firing for thread ' . $thread->id;
 
-        event(new \App\Events\PostCreated($new));  // ← pass $new, not $thread
+        event(new \App\Events\PostCreated($new));
+
+        return response()->noContent();
     }
 
 }

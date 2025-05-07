@@ -21,8 +21,17 @@ export default function ForumIndex({threads, popularThreads, recentActivity}) {
             </header>
 
             <div className="container mx-auto px-4 py-6">
-                <div className="flex flex-col lg:flex-row lg:space-x-6">
+                {/* Create Thread Button */}
+                <div className="mb-4 flex justify-end">
+                    <Link
+                        href="/threads/create"
+                        className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-500"
+                    >
+                        Create Thread
+                    </Link>
+                </div>
 
+                <div className="flex flex-col lg:flex-row lg:space-x-6">
                     {/* Threads List */}
                     <div className="flex-1">
                         {threads.map(thread => (
@@ -72,8 +81,6 @@ export default function ForumIndex({threads, popularThreads, recentActivity}) {
                         </div>
                     </aside>
                 </div>
-
-
             </div>
             {/* Footer */}
             <footer className="mt-8 bg-green-950 text-white py-6">

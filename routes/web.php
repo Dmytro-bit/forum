@@ -27,8 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+Route::get('/threads/create', [ThreadController::class, 'create'])->name('threads.create');
 Route::get('/threads', [ThreadController::class, 'index'])->name('threads.index');
+Route::post('/threads', [ThreadController::class, 'store'])->name('threads.store');
 Route::get('/threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
 Route::post('/threads/{thread}/posts', [ThreadController::class, 'storePost'])->name('threads.posts.store');
 require __DIR__.'/auth.php';

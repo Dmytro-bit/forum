@@ -155,7 +155,7 @@ class ThreadController extends Controller
 
         event(new \App\Events\PostCreated($new));
 
-        return response()->noContent();
+        return response()->json(['status' => 'ok'], 200);
     }
 
 }

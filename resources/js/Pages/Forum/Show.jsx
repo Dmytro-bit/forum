@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Head, Link, useForm} from '@inertiajs/react';
-
+import axios from 'axios';
 export default function ThreadShow({thread, posts, sidebarThreads, auth}) {
     const {data, setData, post, processing, reset} = useForm({body: ''});
     const [livePosts, setLivePosts] = useState(posts);
@@ -17,17 +17,18 @@ export default function ThreadShow({thread, posts, sidebarThreads, auth}) {
     }, [thread.id]);
 
 
-    const submit = (e) => {
-        e.preventDefault();
-
-        post(
-            route('threads.posts.store', thread.id),
-            {
-                preserveState: true,      // ← don’t remount the page
-                preserveScroll: true,     // ← keep your scroll pos if you like
-                onSuccess: () => reset(), // ← clear the textarea
-            }
-        );
+    const submit = async () => {
+        if (!data.body.trim()) return;
+        try {
+            await axios.post(route('threads.posts.store', thread.id), {
+                body: data.body,
+            });
+            reset();
+            setData('body', '');
+            // the PostCreated event will append the new post for you
+        } catch (e) {
+            console.error(e);
+        }
     };
 
 
@@ -97,26 +98,23 @@ export default function ThreadShow({thread, posts, sidebarThreads, auth}) {
 
 
                     {/* Conditionally render the form */}
-                    {auth.user && (
-                        <form onSubmit={submit} className="p-4 border-t">
-                            <div className="flex items-center space-x-3">
-                        <textarea
-                            value={data.body}
-                            onChange={e => setData('body', e.target.value)}
-                            placeholder="Type your programming query here..."
-                            className="flex-1 rounded border-gray-300 p-2"
-                            rows={3}
-                        />
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="bg-green-600 text-white px-4 py-2 rounded"
-                                >
-                                    Send
-                                    <i className="fas fa-paper-plane"/>
-                                </button>
-                            </div>
-                        </form>
+                    {auth.user && (<div className="p-4 border-t flex items-center space-x-3">
+                            <textarea
+                                value={data.body}
+                                onChange={e => setData('body', e.target.value)}
+                                placeholder="Type your programming query here..."
+                                className="flex-1 rounded border-gray-300 p-2"
+                                rows={3}
+                            />
+                            <button
+                                type="button"            // ← NOT type="submit"
+                                onClick={submit}          // ← plain click handler
+                                disabled={!data.body.trim()}
+                                className="bg-green-600 text-white px-4 py-2 rounded"
+                            >
+                                Send<i className="fas fa-paper-plane ml-2" />
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

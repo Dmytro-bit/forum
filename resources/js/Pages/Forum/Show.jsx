@@ -19,8 +19,13 @@ export default function ThreadShow({thread, posts, sidebarThreads}) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('threads.posts.store', thread.id));
+
+        post(route('threads.posts.store', thread.id), {
+            preserveState: true,
+            onSuccess: () => reset(),
+        });
     };
+
 
     return (
         <>

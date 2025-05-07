@@ -1,4 +1,5 @@
 #!/bin/bash
 
 npm run build
-php artisan serve  & npm run dev
+
+npm run dev & php artisan serve

@@ -103,8 +103,6 @@ class ThreadController extends Controller
         echo 'PostCreated event firing for thread ' . $thread->id;
 
         event(new \App\Events\PostCreated($new));  // ← pass $new, not $thread
-
-        return redirect()->route('threads.show', $thread);
     }
 
 }

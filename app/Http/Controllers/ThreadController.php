@@ -36,10 +36,27 @@ class ThreadController extends Controller
         return Inertia::render('Forum/Index', compact('threads', 'popularThreads', 'recentActivity'));
     }
 
+
     public function show(Thread $thread)
     {
-        $thread->load(['user', 'category', 'posts.user']);
-        return view('threads.show', compact('thread'));
+        $thread->load(['author', 'replies.author']);
+        $posts = $thread->replies->map(fn($post) => [
+            'id'        => $post->id,
+            'author'    => ['name' => $post->author->name, 'avatar' => $post->author->avatar_url],
+            'body'      => $post->body,
+            'created_at'=> $post->created_at->format('H:i A'),
+        ]);
+
+        $sidebarThreads = Thread::where('id', '!=', $thread->id)
+            ->latest('updated_at')
+            ->limit(10)
+            ->get(['id','title']);
+
+        return Inertia::render('Forum/Show', [
+            'thread'         => [ 'id' => $thread->id, 'title' => $thread->title ],
+            'posts'          => $posts,
+            'sidebarThreads' => $sidebarThreads,
+        ]);
     }
 
     public function create()
@@ -58,4 +75,15 @@ class ThreadController extends Controller
         $thread = $request->user()->threads()->create($validated);
         return redirect()->route('threads.show', $thread);
     }
+
+    public function storePost(Request $request, Thread $thread)
+    {
+        $request->validate([ 'body' => 'required|string' ]);
+    $thread->replies()->create([
+        'user_id' => auth()->id(),
+        'content'    => $request->body,
+    ]);
+
+    return redirect()->route('threads.show', $thread);
+}
 }

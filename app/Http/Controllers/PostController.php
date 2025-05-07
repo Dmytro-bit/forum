@@ -32,7 +32,6 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
             'content' => 'required|string'
         ]);
 
@@ -62,7 +61,6 @@ class PostController extends Controller
         $this->authorize('update', $post);
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
             'content' => 'required|string'
         ]);
 

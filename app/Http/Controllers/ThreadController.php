@@ -39,16 +39,12 @@ class ThreadController extends Controller
 
         return Inertia::render('Home', [
             'threads' => $threads,
-            'popularThreads' => Thread::withCount('replies')
-                ->orderBy('replies_count', 'desc')
-                ->limit(5)
-                ->get(['id', 'title']),
-            'recentActivity' => [
-                'New comment on "Thread Title 1"',
-                'Alice Smith joined the forum',
-                'John Doe updated his profile picture',
+            'popularThreads' => $popularThreads,
+            'recentActivity' => $recentActivity,
+            'auth' => [
+                'user' => auth()->user()
             ]
-        ]);    }
+        ]);  }
 
 
     public function show(Thread $thread)

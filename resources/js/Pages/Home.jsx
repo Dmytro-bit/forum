@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 
-export default function Home({ threads, popularThreads, recentActivity }) {
+export default function Home({ threads, popularThreads, recentActivity, auth }) {
     return (
         <>
             <Head title="Forum" />
@@ -14,15 +14,32 @@ export default function Home({ threads, popularThreads, recentActivity }) {
                                 <h1 className="text-4xl font-bold mb-2">Welcome to Forum</h1>
                                 <p className="text-emerald-300">Join the discussion with our community</p>
                             </div>
-                            <a
-                                href="/threads/create"
-                                className="inline-flex items-center px-6 py-3 bg-white text-emerald-900 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition-colors duration-200 shadow-sm hover:shadow"
-                            >
-                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                </svg>
-                                Start New Discussion
-                            </a>
+                            {auth?.user ? (
+                                <a
+                                    href="/threads/create"
+                                    className="inline-flex items-center px-6 py-3 bg-white text-emerald-900 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition-colors duration-200 shadow-sm hover:shadow"
+                                >
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Start New Discussion
+                                </a>
+                            ) : (
+                                <div className="space-x-4">
+                                    <a
+                                        href="/login"
+                                        className="inline-flex items-center px-6 py-3 bg-white text-emerald-900 text-sm font-semibold rounded-lg hover:bg-emerald-50 transition-colors duration-200 shadow-sm hover:shadow"
+                                    >
+                                        Sign in
+                                    </a>
+                                    <a
+                                        href="/register"
+                                        className="inline-flex items-center px-6 py-3 bg-emerald-800 text-white text-sm font-semibold rounded-lg border border-emerald-700 hover:bg-emerald-700 transition-colors duration-200 shadow-sm hover:shadow"
+                                    >
+                                        Sign up
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
 

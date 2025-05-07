@@ -3,10 +3,8 @@ import {Head, Link, useForm} from '@inertiajs/react';
 
 export default function ThreadShow({thread, posts, sidebarThreads}) {
     const {data, setData, post, processing, reset} = useForm({body: ''});
-    // turn the incoming posts prop into local state
     const [livePosts, setLivePosts] = useState(posts);
 
-    // subscribe to new posts over Echo
     useEffect(() => {
         const channel = window.Echo.channel(`thread.${thread.id}`);
         channel.listen('PostCreated', e => {

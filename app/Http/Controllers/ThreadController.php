@@ -10,16 +10,18 @@ class ThreadController extends Controller
 {
     public function index()
     {
+
         $threads = Thread::with('author')
             ->withCount('replies')
             ->latest('updated_at')
             ->get()
-            ->map(fn($t) => [
-                'id' => $t->id,
-                'title' => $t->title,
-                'author' => ['name' => $t->author->name],
-                'replies_count' => $t->replies_count,
-                'last_activity' => $t->updated_at->diffForHumans(),
+            ->map(fn($thread) => [
+                'id' => $thread->id,
+                'title' => $thread->title,
+                'author' => ['name' => $thread->author->name],
+                'replies_count' => $thread->replies_count,
+                'last_activity' => $thread->updated_at->diffForHumans(),
+                'is_pinned' => $thread->is_pinned
             ]);
 
         $popularThreads = Thread::withCount('replies')
@@ -35,20 +37,16 @@ class ThreadController extends Controller
 
 
         return Inertia::render('Home', [
-            'threads' => Thread::with('author')
-                ->latest()
-                ->get()
-                ->map(fn ($thread) => [
-                    'id' => $thread->id,
-                    'slug' => $thread->slug,
-                    'title' => $thread->title,
-                    'content' => $thread->content,
-                    'author' => [
-                        'name' => $thread->author->name
-                    ],
-                    'is_pinned' => $thread->is_pinned,
-                    'last_activity' => $thread->last_activity
-                ])
+            'threads' => $threads,
+            'popularThreads' => Thread::withCount('replies')
+                ->orderBy('replies_count', 'desc')
+                ->limit(5)
+                ->get(['id', 'title']),
+            'recentActivity' => [
+                'New comment on "Thread Title 1"',
+                'Alice Smith joined the forum',
+                'John Doe updated his profile picture',
+            ]
         ]);    }
 
 

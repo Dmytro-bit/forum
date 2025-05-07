@@ -16,8 +16,8 @@ class PostSeeder extends Seeder
 
         foreach ($threads as $thread) {
             Post::create([
-                'title' => "Reply to {$thread->title}",
-                'slug' => "reply-to-" . $thread->slug,
+//                'title' => "Reply to {$thread->title}",
+//                'slug' => "reply-to-" . $thread->slug,
                 'content' => "This is a reply to {$thread->title}.",
                 'thread_id' => $thread->id,
                 'user_id' => $user->id

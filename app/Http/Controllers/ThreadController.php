@@ -33,8 +33,23 @@ class ThreadController extends Controller
             'John Doe updated his profile picture',
         ];
 
-        return Inertia::render('Forum/Index', compact('threads', 'popularThreads', 'recentActivity'));
-    }
+
+        return Inertia::render('Home', [
+            'threads' => Thread::with('author')
+                ->latest()
+                ->get()
+                ->map(fn ($thread) => [
+                    'id' => $thread->id,
+                    'slug' => $thread->slug,
+                    'title' => $thread->title,
+                    'content' => $thread->content,
+                    'author' => [
+                        'name' => $thread->author->name
+                    ],
+                    'is_pinned' => $thread->is_pinned,
+                    'last_activity' => $thread->last_activity
+                ])
+        ]);    }
 
 
     public function show(Thread $thread)

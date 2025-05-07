@@ -100,7 +100,7 @@ class ThreadController extends Controller
 
         $new = $thread->replies()->create([
             'user_id' => auth()->id(),
-            'body'    => $request->body,
+            'content'    => $request->body,
         ]);
 
         event(new \App\Events\PostCreated($new));

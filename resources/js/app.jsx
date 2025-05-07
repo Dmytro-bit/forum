@@ -1,17 +1,29 @@
-import React from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import Home from './Components/Home';
+import {createRoot} from 'react-dom/client';
+import {createInertiaApp} from '@inertiajs/react';
+import {resolvePageComponent} from 'laravel-vite-plugin/inertia-helpers';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import '../css/app.css';
 
-console.log("App component loaded");
+import Pusher from 'pusher-js'
+import Echo    from 'laravel-echo'
 
-function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home/>}/>
-            </Routes>
-        </BrowserRouter>
-    );
-}
+// expose globally
+window.Pusher = Pusher
+window.Echo    = new Echo({
+    broadcaster: 'pusher',
+    key:         import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster:     import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS:    true,
+})
 
-export default App;
+createInertiaApp({
+    resolve: name =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob('./Pages/**/*.jsx')
+        ),
+    setup({el, App, props}) {
+        createRoot(el).render(<App {...props} />);
+    },
+});

@@ -18,9 +18,9 @@ class Thread extends Model
         'is_pinned'
     ];
 
-    public function user(): BelongsTo
+    public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function category(): BelongsTo
@@ -31,5 +31,15 @@ class Thread extends Model
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function replies(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function getLastActivityAttribute(): string
+    {
+        return $this->updated_at->diffForHumans();
     }
 }

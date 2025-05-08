@@ -18,7 +18,7 @@ A real-time discussion forum built with Laravel, Inertia.js, React, Tailwind CSS
 * **Thread Detail**: Read and post messages in a thread. Messages include author, avatar, timestamp, and body.
 * **Real-Time Updates**: New posts are broadcast to all viewers instantly using Pusher or Laravel WebSockets.
 * **Responsive UI**: Styled with Tailwind CSS for layout and Bootstrap for components.
-* **Inertia.js**: Seamless SPA-like navigation without a full frontend framework overhead.
+* **Chat-GPT**: Integrated AI-assistance functionality using OpenAI's API for real-time responses.
 
 ---
 
@@ -28,6 +28,7 @@ A real-time discussion forum built with Laravel, Inertia.js, React, Tailwind CSS
 * **Frontend**: React via Inertia.js
 * **Styling**: Tailwind CSS & Bootstrap
 * **WebSockets**: Pusher or Laravel WebSockets (beyondcode/laravel-websockets)
+* **AI assistant**: ChatGPT API
 * **Build Tool**: Vite
 
 ---
@@ -77,6 +78,7 @@ VITE_PUSHER_APP_KEY=
 VITE_PUSHER_APP_CLUSTER=
 
 QUEUE_CONNECTION=sync
+OPENAI_API_KEY=
 ```
 
 > **Note:** If using Laravel WebSockets, set `BROADCAST_DRIVER=pusher` and configure `.env` for local server (host/port).

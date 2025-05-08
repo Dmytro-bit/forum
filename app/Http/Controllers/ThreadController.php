@@ -25,7 +25,7 @@ class ThreadController extends Controller
                 'author' => ['name' => $thread->author->name],
                 'replies_count' => $thread->replies_count,
                 'last_activity' => $thread->updated_at->diffForHumans(),
-                'is_pinned' => $thread->is_pinned
+                'is_pinned' => (bool)$thread->is_pinned
             ]);
 
         $popularThreads = Thread::popular()
@@ -78,7 +78,7 @@ class ThreadController extends Controller
                 'author' => ['name' => $thread->author->name],
                 'replies_count' => $thread->replies_count,
                 'last_activity' => $thread->updated_at->diffForHumans(),
-                'is_pinned' => $thread->is_pinned
+                'is_pinned' => (bool) $thread->is_pinned
             ]);
 
         $popularThreads = Thread::withCount('replies')
@@ -86,21 +86,44 @@ class ThreadController extends Controller
             ->limit(5)
             ->get(['id', 'title']);
 
-        $recentActivity = [
-            'New comment on "Thread Title 1"',
-            'Alice Smith joined the forum',
-            'John Doe updated his profile picture',
-        ];
+
+        $recentActivity = Activity::with('user', 'subject')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($activity) {
+                $user = $activity->user->name;
+
+                // If for some reason there's no subject (should be rare), fall back:
+                if (! $activity->subject) {
+                    return "{$user} performed an action";
+                }
+
+                switch ($activity->type) {
+                    case 'created_thread':
+                        return "{$user} created \"{$activity->subject->title}\"";
+
+                    case 'created_post':
+                        // $activity->subject is a Post, so ->thread lazy-loads correctly
+                        return "{$user} commented on \"{$activity->subject->thread->title}\"";
+
+                    case 'joined_forum':
+                        return "{$user} joined the forum";
+
+                    default:
+                        // you can customize description or fall back to a generic message
+                        return $activity->description
+                            ?? "{$user} performed an action";
+                }
+            });
 
 
         return Inertia::render('Home', [
-            'threads' => $threads,
+            'threads'        => $threads,
             'popularThreads' => $popularThreads,
             'recentActivity' => $recentActivity,
-            'auth' => [
-                'user' => auth()->user()
-            ]
-        ]);  }
+            'auth'           => ['user' => auth()->user()],
+        ]); }
 
 
     public function show(Thread $thread)

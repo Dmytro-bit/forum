@@ -181,7 +181,3 @@ php artisan websockets:serve
 Feel free to open issues or submit pull requests. Please follow PSR-12 standards for PHP and consistent code styling for JS (Prettier).
 
 ---
-
-## License
-
-MIT © Your Name

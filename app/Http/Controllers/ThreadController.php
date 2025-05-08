@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Activity;
 
 use App\Models\Thread;
 use Illuminate\Http\Request;
@@ -31,11 +32,25 @@ class ThreadController extends Controller
             ->limit(5)
             ->get(['id', 'title']);
 
-        $recentActivity = [
-            'New comment on "Thread Title 1"',
-            'Alice Smith joined the forum',
-            'John Doe updated his profile picture',
-        ];
+
+        $recentActivity = Activity::with(['user', 'subject'])
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($activity) {
+                if (!$activity->subject) {
+                    return "{$activity->user->name} performed an action";
+                }
+
+                $description = match ($activity->type) {
+                    'created_thread' => $activity->subject ? "created thread \"{$activity->subject->title}\"" : "created a thread",
+                    'created_post' => $activity->subject && $activity->subject->thread ? "commented on \"{$activity->subject->thread->title}\"" : "commented on a thread",
+                    'joined_forum' => "joined the forum",
+                    default => $activity->description ?? 'performed an action'
+                };
+
+                return "{$activity->user->name} {$description}";
+            });
 
         $stats = [
             'threads_count' => Thread::where('user_id', $user->id)->count(),

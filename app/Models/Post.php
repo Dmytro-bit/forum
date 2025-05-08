@@ -31,6 +31,10 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function thread(): BelongsTo
+    {
+        return $this->belongsTo(Thread::class);
+    }
 
     public function getAvatarUrlAttribute(): string
     {

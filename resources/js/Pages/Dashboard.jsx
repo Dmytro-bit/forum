@@ -42,6 +42,7 @@ export default function Dashboard({auth, threads, popularThreads, recentActivity
                                             <div className="flex-1">
                                                 <div className="flex items-center space-x-2">
                                                     {thread.is_pinned && (
+
                                                         <span
                                                             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-900">
                                                             <svg className="w-3 h-3 mr-1" fill="currentColor"

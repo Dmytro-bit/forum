@@ -11,9 +11,9 @@ export default function Home({ threads, popularThreads, recentActivity, auth }) 
                     <div className="bg-emerald-900 rounded-xl shadow-sm p-8 mb-8 text-white">
                         <div className="flex justify-between items-center">
                             <div>
-                                <h1 className="text-4xl font-bold mb-2">Welcome to Forum</h1>
+                                <h1 className="text-4xl font-bold mb-2">Welcome to Greendit</h1>
                                 <p className="text-emerald-300">
-                                    Join the discussion with our community
+                                    Join the discussion with our green community
                                 </p>
                             </div>
                             {auth?.user ? (
